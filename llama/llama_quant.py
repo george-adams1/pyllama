@@ -44,7 +44,7 @@ def run(args):
             model = load_quant(
                 model,
                 args.local_model,
-                args.wbits,
+                args.bits,
                 skip_layers,
                 model.config.max_sequence_length,
             )
@@ -183,7 +183,7 @@ def run(args):
             print(n, torch.mean((p == 0).float()))
             if "fc2" in n:
                 break
-    elif args.wbits < 16 and not args.nearest and args.mode == "q":
+    elif args.bits < 16 and not args.nearest and args.mode == "q":
         quantizers = get_quantizer(
             model,
             model.model,
@@ -201,7 +201,7 @@ def run(args):
     if args.save:
         model = model.cpu()
         print_model(model, show_buffer=True)
-        model_pack(model, quantizers, args.wbits, torch.device("cpu"))
+        model_pack(model, quantizers, args.bits, torch.device("cpu"))
         torch.save(model.state_dict(), args.save)
         model.save_pretrained(args.save + ".pretrained")
 

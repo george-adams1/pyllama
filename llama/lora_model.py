@@ -54,7 +54,7 @@ def prepare(
         )
     return model
 
-def load_lora_model(f="lora-alpaca/checkpoint-1620/pytorch_model.bin",wbits=2,max_lora_layers=5,dev=torch.device("cuda:0")):
+def load_lora_model(f="lora-alpaca/checkpoint-1620/pytorch_model.bin",bits=2,max_lora_layers=5,dev=torch.device("cuda:0")):
     hf_model_name = "decapoda-research/llama-7b-hf"
     config = LLaMAConfig.from_pretrained(hf_model_name)
     avoid_tensor_modified()
@@ -65,7 +65,7 @@ def load_lora_model(f="lora-alpaca/checkpoint-1620/pytorch_model.bin",wbits=2,ma
     model = load_quant(
         model_ori,
         None,
-        wbits,
+        bits,
         ["lm_head"],
         seqlen=1024,
         for_infer=True,
@@ -80,7 +80,7 @@ def load_lora_model(f="lora-alpaca/checkpoint-1620/pytorch_model.bin",wbits=2,ma
         lora_dropout=LORA_DROPOUT,
         bias="none",
         task_type="CAUSAL_LM",
-        wbits=wbits,
+        bits=bits,
         max_lora_layers=max_lora_layers,
     )
     model = get_peft_model(model, config)
