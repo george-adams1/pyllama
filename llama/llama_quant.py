@@ -141,14 +141,13 @@ def run(args):
     if args.benchmark:
         gpus = [torch.device(f"cuda:{i}") for i in range(torch.cuda.device_count())]
         if len(gpus) > 1:
-            first = ["embed_tokens", "embed_positions", "project_in"]
-            last = ["project_out", "final_layer_norm"]
-            decoder_multigpu(model, model.model, gpus, first, last)
+            tail = ("embed_tokens",)
+            head = ("norm",)
+            decoder_multigpu(model, model.model, gpus, tail, head)
         else:
             model = model.to(dev)
-        if args.benchmark:
-            input_ids = next(iter(data_loader))[0][:, : args.benchmark]
-            benchmark(model, model.model, input_ids, check_perplexity=args.perplexity)
+        input_ids = next(iter(data_loader))[0][:, : args.benchmark]
+        benchmark(model, model.model, input_ids, check_perplexity=args.perplexity)
         return
 
     if args.text:

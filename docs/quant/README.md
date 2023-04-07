@@ -55,3 +55,28 @@ Median: 0.08878755569458008
 PPL: 32758.173828125
 Max memory(MiB): 19328.5654296875
 ```
+
+
+```
+＞python -m pudb -m llama.llama_quant decapoda-research/llama-65b-hf c4 --load q --local_model pyllama-65B3b.torch20.pt --wbits 3 --benchmark 1024 --max_length 64 --perplexity
+🌳 LLaMAForCausalLM
+├── model(LLaMAModel)
+│   ├── embed_tokens(Embedding) weight[32000,8192](fp16)
+│   ├── layers(ModuleList)
+│   │   └── +0-79(LLaMADecoderLayer)
+│   │       ├── self_attn(LLaMAAttention)
+│   │       │   ├── +q_proj,k_proj,v_proj,o_proj(QuantLinear) qweight[768,8192](i32)❄️  shift[8192,1]❄️  scales[8192,1]❄️  bias[8192]❄️
+│   │       │   └── rotary_emb(RotaryEmbedding) inv_freq[64]❄️
+│   │       ├── mlp(LLaMAMLP)
+│   │       │   ├── +gate_proj,up_proj(QuantLinear) qweight[768,22016](i32)❄️  shift[22016,1]❄️  scales[22016,1]❄️  bias[22016]❄️
+│   │       │   └── down_proj(QuantLinear) qweight[2064,8192](i32)❄️  shift[8192,1]❄️  scales[8192,1]❄️  bias[8192]❄️
+│   │       └── +input_layernorm,post_attention_layernorm(RMSNorm) weight[8192](fp16)
+│   └── norm(RMSNorm) weight[8192](fp16)
+└── lm_head(Linear) weight[32000,8192](fp16)
+Number of parameters: 65285660672
+Processing C4 Samples: 100%|████████████████████████████████| 128/128 [00:23<00:00,  5.53it/s]
+Benchmarking:  100%|████████████████████████████████████████| 1024/1024 [02:00<00:00,  8.48it/s]
+Median: 0.11545145511627197
+PPL: 22708.00390625
+Max memory(MiB): 13408.31298828125
+```
